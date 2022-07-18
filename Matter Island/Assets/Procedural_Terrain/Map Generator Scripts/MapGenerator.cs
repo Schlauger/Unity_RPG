@@ -7,7 +7,7 @@ public class MapGenerator : MonoBehaviour
     public enum MapMode{NoiseMap, ColorMap, Mesh};
     public MapMode mode;
 
-    const int mapTileSize = 241;
+    public const int mapTileSize = 241;
 	[Range(0,6)]
 	public int levelOfDetail;
     public float noiseScale;
