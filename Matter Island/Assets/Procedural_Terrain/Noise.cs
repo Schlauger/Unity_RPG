@@ -31,8 +31,8 @@ public static class Noise
         float maxNoiseHeight = float.MinValue;
         float minNoiseHeight = float.MaxValue;
 
-        float halfWidth = mapWidth/2;
-        float halfHeight = mapHeight/2;
+        float halfWidth = mapWidth / 2f;
+        float halfHeight = mapHeight / 2f;
 
         for (int y = 0; y < mapWidth; y++){
             for (int x = 0; x < mapWidth; x++){
@@ -41,13 +41,15 @@ public static class Noise
                 noiseHeight = 0;
 
                 for (int i = 0; i < levels; i++){
-                pointX = (x-halfWidth) / scale * frequency + levelOffsets[i].x; 
-                pointY = (y-halfHeight) / scale * frequency + levelOffsets[i].y;
-                perlinValue = Mathf.PerlinNoise(pointX,pointY)*2 - 1;
-                noiseMap[x,y]= perlinValue;
-                noiseHeight += perlinValue * amplitude;
-                amplitude *= persistance;
-                frequency *=lacunarity;
+                    pointX = (x - halfWidth) / scale * frequency + levelOffsets[i].x;
+                    pointY = (y - halfHeight) / scale * frequency + levelOffsets[i].y;
+                    
+                    perlinValue = Mathf.PerlinNoise(pointX, pointY) * 2 - 1;
+                    noiseMap[x,y]= perlinValue;
+                    noiseHeight += perlinValue * amplitude;
+                    
+                    amplitude *= persistance;
+                    frequency *=lacunarity;
                 }
                 if(noiseHeight > maxNoiseHeight){
                     maxNoiseHeight = noiseHeight;
