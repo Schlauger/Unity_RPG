@@ -16,11 +16,11 @@ public class MapGenerator : MonoBehaviour
     public float persistance;
     public float lacunarity;
     public int seed;
-    public TerrainType[] regions;
     public float heightGain;
-    public bool autoUpdate;
     public AnimationCurve gainCurve;
+    public bool autoUpdate;
     public Vector2 offset;
+    public TerrainType[] regions;
     
     public void GenarateMap(){
         float[,] noiseMap = Noise.GenarateNoiseMap(mapTileSize,mapTileSize,seed,noiseScale,levels,persistance,lacunarity,offset);
@@ -29,7 +29,6 @@ public class MapGenerator : MonoBehaviour
         for (int y = 0; y < mapTileSize; y++){
             for (int x = 0; x < mapTileSize; x++){
                 current=noiseMap[x,y];
-
                 for (int i = 0; i < regions.Length; i++){
                     if(current <= regions[i].height){
                         colorMap[y*mapTileSize + x] = regions[i].colour;
