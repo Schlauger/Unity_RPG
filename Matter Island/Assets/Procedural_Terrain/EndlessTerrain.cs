@@ -4,7 +4,7 @@ using System.Collections;
 
 public class EndlessTerrain : MonoBehaviour {
 
-    public const float maxViewDst = 450;
+    public const float maxViewDst = 200;
     public Transform viewer;
 
     public static Vector2 viewerPosition;
@@ -28,7 +28,7 @@ public class EndlessTerrain : MonoBehaviour {
         for (int i = 0; i < existedTiles.Count; i++){
             existedTiles[i].setVisible(false);
         }
-        terrainTilesDict.Clear();
+        existedTiles.Clear();
 
         int currentTileX = Mathf.RoundToInt(viewerPosition.x / tileSize);
         int currentTileY = Mathf.RoundToInt(viewerPosition.y / tileSize);
@@ -36,15 +36,15 @@ public class EndlessTerrain : MonoBehaviour {
 
         for (int yOffset = -visibleTiles; yOffset <= visibleTiles; yOffset++){
             for (int xOffset = -visibleTiles; xOffset <= visibleTiles; xOffset++){
-                timer(30);
+                
                 Debug.Log("TileX:"+xOffset+", tileY:"+yOffset);
                 timer(20);
                 Vector2 viewedChunkCoord = new Vector2((float)currentTileX + (float)xOffset, (float)currentTileY + (float)yOffset);
-                Debug.Log("TileX:"+viewedChunkCoord.x+", tileY:"+viewedChunkCoord.y);
                 timer(15);
                 if (terrainTilesDict.ContainsKey(viewedChunkCoord)){
+                    timer(50);
+                    Debug.Log(terrainTilesDict.ContainsKey(viewedChunkCoord)+"->"+"TileX:"+viewedChunkCoord.x+", tileY:"+viewedChunkCoord.y);
                     terrainTilesDict[viewedChunkCoord].UpdateTile();
-                    
                     if (terrainTilesDict[viewedChunkCoord].isVisible()){
                         existedTiles.Add(terrainTilesDict[viewedChunkCoord]);
                     }
@@ -77,8 +77,7 @@ public class EndlessTerrain : MonoBehaviour {
             setVisible(true);
         }
 
-        public void UpdateTile()
-        {
+        public void UpdateTile() {
             float dstFromviewer = Mathf.Sqrt(bounds.SqrDistance(viewerPosition));
             bool visible = dstFromviewer <= maxViewDst;
             setVisible(visible);
