@@ -2,10 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Utils
-{
-/*---------------------------------------------------------------------------------------------*/
-/*____________________________________ Texture Generators ____________________________________*/
+public class Utils : MonoBehaviour {
+    /*---------------------------------------------------------------------------------------------*/
+    /*____________________________________ Timers ____________________________________*/
+    public static void timer(){
+        //StartCoroutine(Utils.boltClock());
+    }
+    static IEnumerator boltClock(){
+        yield return new WaitForSeconds(10);
+    }
+    /*---------------------------------------------------------------------------------------------*/
+    /*____________________________________ Texture Generators ____________________________________*/
     public static Texture2D textureFromColorMap(Color[] colorMap, int width, int height){
         Texture2D texture = new Texture2D(width,height);
         texture.filterMode = FilterMode.Point;

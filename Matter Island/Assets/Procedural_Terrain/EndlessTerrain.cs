@@ -1,23 +1,22 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
-public class EndlessTerrain : MonoBehaviour
-{
+public class EndlessTerrain : MonoBehaviour {
 
     public const float maxViewDst = 450;
     public Transform viewer;
 
     public static Vector2 viewerPosition;
     int tileSize;
-    int chunksvisibleTiles;
+    int visibleTiles;
 
     Dictionary<Vector2, TerrainTile> terrainTilesDict = new Dictionary<Vector2, TerrainTile>();
     List<TerrainTile> existedTiles = new List<TerrainTile>();
 
     void Start(){
         tileSize = MapGenerator.mapTileSize - 1;
-        chunksvisibleTiles = Mathf.RoundToInt(maxViewDst / tileSize);
+        visibleTiles = Mathf.RoundToInt(maxViewDst / tileSize);
     }
 
     void Update(){
@@ -33,19 +32,27 @@ public class EndlessTerrain : MonoBehaviour
 
         int currentTileX = Mathf.RoundToInt(viewerPosition.x / tileSize);
         int currentTileY = Mathf.RoundToInt(viewerPosition.y / tileSize);
-        Vector2 viewedChunkCoord;
+        
 
-        for (int yOffset = -chunksvisibleTiles; yOffset <= chunksvisibleTiles; yOffset++){
-            for (int xOffset = -chunksvisibleTiles; xOffset <= chunksvisibleTiles; xOffset++){
-                viewedChunkCoord= new Vector2(currentTileX + xOffset, currentTileY + yOffset);
+        for (int yOffset = -visibleTiles; yOffset <= visibleTiles; yOffset++){
+            for (int xOffset = -visibleTiles; xOffset <= visibleTiles; xOffset++){
+                timer(30);
+                Debug.Log("TileX:"+xOffset+", tileY:"+yOffset);
+                timer(20);
+                Vector2 viewedChunkCoord = new Vector2((float)currentTileX + (float)xOffset, (float)currentTileY + (float)yOffset);
+                Debug.Log("TileX:"+viewedChunkCoord.x+", tileY:"+viewedChunkCoord.y);
+                timer(15);
                 if (terrainTilesDict.ContainsKey(viewedChunkCoord)){
                     terrainTilesDict[viewedChunkCoord].UpdateTile();
+                    
                     if (terrainTilesDict[viewedChunkCoord].isVisible()){
                         existedTiles.Add(terrainTilesDict[viewedChunkCoord]);
                     }
                 }else{
                     terrainTilesDict.Add(viewedChunkCoord, new TerrainTile(viewedChunkCoord, tileSize,transform));
                 }
+                
+                
             }
         }
 
@@ -67,7 +74,7 @@ public class EndlessTerrain : MonoBehaviour
             obj.transform.position = position3D;
             obj.transform.localScale = (Vector3.one * size) / 10f;
             obj.transform.parent = parent;
-            setVisible(false);
+            setVisible(true);
         }
 
         public void UpdateTile()
@@ -83,5 +90,12 @@ public class EndlessTerrain : MonoBehaviour
         public bool isVisible() {
             return obj.activeSelf;
         }
+    }
+
+     public void timer(int sec){
+        StartCoroutine(boltClock(sec));
+    }
+    IEnumerator boltClock(int sec){
+        yield return new WaitForSeconds(sec);
     }
 }
