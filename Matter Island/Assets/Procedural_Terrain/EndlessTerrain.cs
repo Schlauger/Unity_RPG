@@ -8,6 +8,7 @@ public class EndlessTerrain : MonoBehaviour {
     public Transform viewer;
 
     public static Vector2 viewerPosition;
+    static MapGenerator mapGenerator;
     int tileSize;
     int visibleTiles;
 
@@ -15,6 +16,7 @@ public class EndlessTerrain : MonoBehaviour {
     List<TerrainTile> existedTiles = new List<TerrainTile>();
 
     void Start(){
+        mapGenerator = FindObjectOfType<MapGenerator>();
         tileSize = MapGenerator.mapTileSize - 1;
         visibleTiles = Mathf.RoundToInt(maxViewDst / tileSize);
     }
@@ -75,6 +77,10 @@ public class EndlessTerrain : MonoBehaviour {
             obj.transform.localScale = (Vector3.one * size) / 10f;
             obj.transform.parent = parent;
             setVisible(true);
+        }
+
+        void OnMapDtReceived(MapData mapDt) {
+            print("Map data received");
         }
 
         public void UpdateTile() {
