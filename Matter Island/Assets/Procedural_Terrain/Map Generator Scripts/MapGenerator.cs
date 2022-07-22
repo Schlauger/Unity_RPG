@@ -5,8 +5,7 @@ using System;
 using System.Threading; 
 using System.Collections.Generic;
 
-public class MapGenerator : MonoBehaviour
-{
+public class MapGenerator : MonoBehaviour {
     
     public enum MapMode { NoiseMap, ColorMap, Mesh };
     public MapMode mode;
@@ -70,14 +69,15 @@ public class MapGenerator : MonoBehaviour
         };
         new Thread(my_thread).Start();
     }
+
 void MapDataThread(Action<MapData> callback)
     {
         MapData mapData = GenarateMapData();
         lock (mapDtThreadInfoQ){
-        mapDtThreadInfoQ.Enqueue(new mapThreadInfo<MapData>(callback, mapData));
-    }
-        void Update()
-        {
+            mapDtThreadInfoQ.Enqueue(new mapThreadInfo<MapData>(callback, mapData));
+        }
+
+        void Update(){
             if (mapDtThreadInfoQ.Count > 0) { 
                 for (int i = 0; i < mapDtThreadInfoQ.Count; i++){
                     mapThreadInfo<MapData> threadInfo = mapDtThreadInfoQ.Dequeue();

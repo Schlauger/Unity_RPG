@@ -39,13 +39,13 @@ public class EndlessTerrain : MonoBehaviour {
         for (int yOffset = -visibleTiles; yOffset <= visibleTiles; yOffset++){
             for (int xOffset = -visibleTiles; xOffset <= visibleTiles; xOffset++){
                 
-                Debug.Log("TileX:"+xOffset+", tileY:"+yOffset);
-                timer(20);
+                //Debug.Log("TileX:"+xOffset+", tileY:"+yOffset);
+                //timer(20);
                 Vector2 viewedChunkCoord = new Vector2((float)currentTileX + (float)xOffset, (float)currentTileY + (float)yOffset);
-                timer(15);
+                //timer(15);
                 if (terrainTilesDict.ContainsKey(viewedChunkCoord)){
-                    timer(50);
-                    Debug.Log(terrainTilesDict.ContainsKey(viewedChunkCoord)+"->"+"TileX:"+viewedChunkCoord.x+", tileY:"+viewedChunkCoord.y);
+                    //timer(50);
+                    //Debug.Log(terrainTilesDict.ContainsKey(viewedChunkCoord)+"->"+"TileX:"+viewedChunkCoord.x+", tileY:"+viewedChunkCoord.y);
                     terrainTilesDict[viewedChunkCoord].UpdateTile();
                     if (terrainTilesDict[viewedChunkCoord].isVisible()){
                         existedTiles.Add(terrainTilesDict[viewedChunkCoord]);
@@ -77,6 +77,8 @@ public class EndlessTerrain : MonoBehaviour {
             obj.transform.localScale = (Vector3.one * size) / 10f;
             obj.transform.parent = parent;
             setVisible(true);
+
+            mapGenerator.RequestMapData(OnMapDtReceived);
         }
 
         void OnMapDtReceived(MapData mapDt) {
