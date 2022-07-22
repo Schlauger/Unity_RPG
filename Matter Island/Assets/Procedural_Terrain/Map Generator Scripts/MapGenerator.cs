@@ -26,6 +26,7 @@ public class MapGenerator : MonoBehaviour {
     public TerrainType[] regions;
 
     Queue<mapThreadInfo<MapData>> mapDtThreadInfoQ = new Queue<mapThreadInfo<MapData>>();
+    Queue<mapThreadInfo<MeshData>> meshDtThreadInfoQ = new Queue<mapThreadInfo<MeshData>>();
 
     /*          Generate and Draw Map          */
     /*-----------------------------------------*/
@@ -70,14 +71,26 @@ public class MapGenerator : MonoBehaviour {
         new Thread(my_thread).Start();
     }
 
-void MapDataThread(Action<MapData> callback)
-    {
+    public void RequestMeshData() { }
+    
+
+    void MapDataThread(Action<MapData> callback){
         MapData mapData = GenarateMapData();
         lock (mapDtThreadInfoQ){
             mapDtThreadInfoQ.Enqueue(new mapThreadInfo<MapData>(callback, mapData));
         }
 
-        void Update(){
+    }
+
+    void MeshDataThread(Action<MeshData> callback){
+        MapData mapData = GenarateMapData();
+        lock (mapDtThreadInfoQ){
+            mapDtThreadInfoQ.Enqueue(new mapThreadInfo<MapData>(callback, mapData));
+        }
+
+    }
+
+    void Update(){
             if (mapDtThreadInfoQ.Count > 0) { 
                 for (int i = 0; i < mapDtThreadInfoQ.Count; i++){
                     mapThreadInfo<MapData> threadInfo = mapDtThreadInfoQ.Dequeue();
@@ -85,7 +98,6 @@ void MapDataThread(Action<MapData> callback)
                 }
             }
         }
-    }
 
     void OnValidate(){
     if(lacunarity<1){
