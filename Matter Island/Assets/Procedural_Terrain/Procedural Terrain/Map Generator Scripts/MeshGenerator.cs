@@ -22,9 +22,10 @@ public static class MeshGenerator
         for (int y = 0; y < height; y += meshSimplificationIncrement){
             for (int x = 0; x < width; x += meshSimplificationIncrement){
                 //meshData.vertices[vertexIdx] = new Vector3(minX + x,heightMap[x,y],minZ-y);
-                meshData.addVertex(vertexIdx, (float)minX + (float)x, (float)heightGainCurve.Evaluate(heightMap[x, y]) * (float)heightGain, (float)minZ - (float)y);
                 //meshData.uvs[vertexIdx] = new Vector2( ((width-1)-x) / (float)width, y / (float)height);
-                meshData.addUV(vertexIdx,((width-1)-x)/ (float)width, y/(float)height);
+                meshData.addVertex(vertexIdx, (float)minX + (float)x, (float)heightGainCurve.Evaluate(heightMap[x, y]) * (float)heightGain, (float)minZ - (float)y);            
+                //meshData.addUV(vertexIdx,((width-1)-x)/ (float)width, y/(float)height);
+                meshData.addUV(vertexIdx,(x)/ (float)width, y/(float)height);
 
 
                 if (x < width - 1 && y < height - 1){
