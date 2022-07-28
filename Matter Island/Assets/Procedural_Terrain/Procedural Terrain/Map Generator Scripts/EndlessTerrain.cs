@@ -4,7 +4,7 @@ using System.Collections;
 
 public class EndlessTerrain : MonoBehaviour {
 
-    public const float maxViewDst = 200;
+    public const float maxViewDst = 300;
     public Transform viewer;
     public Material mapMaterial;
 
@@ -54,11 +54,8 @@ public class EndlessTerrain : MonoBehaviour {
                 }else{
                     terrainTilesDict.Add(viewedChunkCoord, new TerrainTile(viewedChunkCoord, tileSize,transform, mapMaterial));
                 }
-                
-                
             }
         }
-
     }
 
 
@@ -75,7 +72,7 @@ public class EndlessTerrain : MonoBehaviour {
             bounds = new Bounds(position, Vector2.one * size);
             Vector3 position3D = new Vector3(position.x, 0, position.y);
 
-            obj = new GameObject("Terrain Tile");
+            obj = new GameObject("Terrain Tile ["+position.x+", "+ position.y+"]");
             meshRenderer = obj.AddComponent<MeshRenderer>();
             meshFilter = obj.AddComponent<MeshFilter>();
             meshRenderer.material = material;
@@ -88,10 +85,11 @@ public class EndlessTerrain : MonoBehaviour {
         } 
 
         void OnMapDtReceived(MapData mapDt) {
-            mapGenerator.RequestMeshData(mapDt, OnMapDtReceived);
+            mapGenerator.RequestMeshData(mapDt, OnMeshDtReceived);
         }
 
-        void OnMapDtReceived(MeshData meshData){
+        void OnMeshDtReceived(MeshData meshData){
+            print("Mesh received.");
             meshFilter.mesh = meshData.CreateMesh();
         }
 

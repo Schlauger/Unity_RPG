@@ -47,12 +47,14 @@ public class MapGenerator : MonoBehaviour {
     /*               Threading               */
     /*_______________________________________*/
 
+    // request Map
     public void RequestMapData(Action<MapData> callback) {
         ThreadStart my_thread = delegate {
             MapDataThread (callback);
         };
         new Thread(my_thread).Start();
     }
+    // Map thread
     void MapDataThread(Action<MapData> callback){
         MapData mapData = GenarateMapData();
         lock (mapDtThreadInfoQ){
@@ -61,12 +63,14 @@ public class MapGenerator : MonoBehaviour {
 
     }
 
+    // request mesh
     public void RequestMeshData(MapData mapData, Action<MeshData> callback) {
         ThreadStart threadStart = delegate {
             MeshDataThread(mapData, callback);
         };
     }
 
+    // mesh thread
     void MeshDataThread(MapData mapData, Action<MeshData> callback){
         MeshData meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap,heightGain,gainCurve, levelOfDetail);
         lock (meshDtThreadInfoQ){
@@ -75,6 +79,20 @@ public class MapGenerator : MonoBehaviour {
 
     }
 
+void Update(){
+        if (mapDtThreadInfoQ.Count > 0){
+            for (int i = 0; i < mapDtThreadInfoQ.Count; i++){
+                mapThreadInfo<MapData> threadInfo = mapDtThreadInfoQ.Dequeue();
+                threadInfo.callback(threadInfo.param);
+            }
+            if (meshDtThreadInfoQ.Count > 0){
+                for (int i = 0; i < meshDtThreadInfoQ.Count; i++){
+                    mapThreadInfo<MeshData> threadInfo = meshDtThreadInfoQ.Dequeue();
+                    threadInfo.callback(threadInfo.param);
+                }
+            }
+        }
+    }
     /*                 Generate                 */
     /*------------------------------------------*/
     MapData GenarateMapData()
@@ -96,20 +114,7 @@ public class MapGenerator : MonoBehaviour {
         return new MapData(noiseMap, colorMap);
     }
 
-    void Update(){
-        if (mapDtThreadInfoQ.Count > 0){
-            for (int i = 0; i < mapDtThreadInfoQ.Count; i++){
-                mapThreadInfo<MapData> threadInfo = mapDtThreadInfoQ.Dequeue();
-                threadInfo.callback(threadInfo.param);
-            }
-            if (meshDtThreadInfoQ.Count > 0){
-                for (int i = 0; i < meshDtThreadInfoQ.Count; i++){
-                    mapThreadInfo<MeshData> threadInfo = meshDtThreadInfoQ.Dequeue();
-                    threadInfo.callback(threadInfo.param);
-                }
-            }
-        }
-    }
+    
 
     void OnValidate(){
     if(lacunarity<1){
@@ -128,5 +133,16 @@ public class MapGenerator : MonoBehaviour {
             this.callback = callback;
             this.param = param;
         }
+    }
+}
+
+public class MapData {
+    public readonly float[,] heightMap;
+    public readonly Color[] colorMap;
+
+    public MapData(float[,] heightMap, Color[] colorMap){
+        this.heightMap = heightMap;
+        this.colorMap = colorMap;
+
     }
 }
