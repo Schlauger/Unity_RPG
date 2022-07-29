@@ -12,7 +12,6 @@ public static class MeshGenerator
         int height = heightMap.GetLength(1);
         float minX = (width - 1) / (-2f);
         float minZ = (height - 1) / (2f);
-        
 
         int meshSimplificationIncrement = (levelOfDetail == 0)?1:levelOfDetail * 2;
         int verticesPerLine = (width - 1) / meshSimplificationIncrement + 1;
@@ -22,9 +21,9 @@ public static class MeshGenerator
         for (int y = 0; y < height; y += meshSimplificationIncrement){
             for (int x = 0; x < width; x += meshSimplificationIncrement){
                 //meshData.vertices[vertexIdx] = new Vector3(minX + x,heightMap[x,y],minZ-y);
+                meshData.addVertex(vertexIdx, (float)minX + (float)x, (float)heightGainCurve.Evaluate(heightMap[x, y]) * (float)heightGain, (float)minZ - (float)y);
+                
                 //meshData.uvs[vertexIdx] = new Vector2( ((width-1)-x) / (float)width, y / (float)height);
-                meshData.addVertex(vertexIdx, (float)minX + (float)x, (float)heightGainCurve.Evaluate(heightMap[x, y]) * (float)heightGain, (float)minZ - (float)y);            
-                //meshData.addUV(vertexIdx,((width-1)-x)/ (float)width, y/(float)height);
                 meshData.addUV(vertexIdx,(x)/ (float)width, y/(float)height);
 
 
