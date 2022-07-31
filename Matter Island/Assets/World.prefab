@@ -61,7 +61,7 @@ Transform:
   m_GameObject: {fileID: 4693659554995294544}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4693659554647344726}
@@ -163,56 +163,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e51b85719eee884faa8385910009e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 1
-  levelOfDetail: 6
+  mode: 2
+  normalizeMode: 1
+  editorLOD: 0
   noiseScale: 25
   levels: 5
   persistance: 0.5
   lacunarity: 2
-  seed: 30
-  heightGain: 14.26
+  seed: 0
+  heightGain: 20
   gainCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      inSlope: 0.14900492
+      outSlope: 0.14900492
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.9958191
-      value: 1.2374992
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
+      time: 0.25755668
+      value: 0.03837721
+      inSlope: 0.7221093
+      outSlope: 0.7221093
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1.2952137
+      outSlope: 1.2952137
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   autoUpdate: 1
-  offset: {x: 0, y: 0}
+  offset: {x: 27.86, y: 15.27}
   regions:
   - type: 
-    height: 0.3
+    height: 0
+    colour: {r: 0.031327877, g: 0.38948274, b: 0.6037736, a: 0}
+  - type: 
+    height: 0.2
     colour: {r: 0.11124954, g: 0.9433962, b: 0.875127, a: 0}
   - type: 
-    height: 0.5
-    colour: {r: 0.098122105, g: 0.990566, b: 0.18194512, a: 0}
+    height: 0.3
+    colour: {r: 0.81409574, g: 0.8207547, b: 0.3213332, a: 0}
+  - type: 
+    height: 0.4
+    colour: {r: 0.06608224, g: 0.5188679, b: 0.10920473, a: 0}
   - type: 
     height: 0.6
-    colour: {r: 0.036080267, g: 0.3962264, b: 0.0018689969, a: 0}
+    colour: {r: 0.025219515, g: 0.2830189, b: 0, a: 0}
+  - type: 
+    height: 0.7
+    colour: {r: 0.2735849, g: 0.1826462, b: 0.0064524733, a: 0}
   - type: 
     height: 0.8
-    colour: {r: 0.3679245, g: 0.24298733, b: 0, a: 0}
+    colour: {r: 0.03739799, g: 0, b: 0.09433961, a: 0}
   - type: 
     height: 0.9
-    colour: {r: 0.2735849, g: 0.1826462, b: 0.0064524733, a: 0}
+    colour: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0}
   - type: 
     height: 1
     colour: {r: 1, g: 1, b: 1, a: 0}
@@ -243,6 +262,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79ce9db386a23d04fbdb4360084b73a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detailLevels:
+  - lod: 1
+    visibleDstThreshold: 200
+  - lod: 2
+    visibleDstThreshold: 400
+  - lod: 3
+    visibleDstThreshold: 600
   viewer: {fileID: 0}
   mapMaterial: {fileID: 2100000, guid: 72e948f4e7c39034d8671e3c2c0b2357, type: 2}
 --- !u!1 &4693659555749909906
@@ -262,7 +288,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4693659555749909907
 Transform:
   m_ObjectHideFlags: 0

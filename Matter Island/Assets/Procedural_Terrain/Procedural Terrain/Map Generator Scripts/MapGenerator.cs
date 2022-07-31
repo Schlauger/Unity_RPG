@@ -7,10 +7,12 @@ using System.Threading;
 
 public class MapGenerator : MonoBehaviour {
     
-    public enum MapMode { NoiseMap, ColorMap, Mesh };
+    public enum MapMode { NoiseMap, ColorMap, Mesh, FalloffMap }; // ep.11 changed
     public MapMode mode;
 
-    public const int mapTileSize = 241;
+    public Noise.NormalizeMode normalizeMode;
+
+    public const int mapTileSize = 239;
     [Range(0, 6)]
     public int editorLOD;
     public float noiseScale;
@@ -25,13 +27,22 @@ public class MapGenerator : MonoBehaviour {
     public Vector2 offset;
     public TerrainType[] regions;
 
+    
+
     Queue<mapThreadInfo<MapData>> mapDtThreadInfoQ = new Queue<mapThreadInfo<MapData>>();
     Queue<mapThreadInfo<MeshData>> meshDtThreadInfoQ = new Queue<mapThreadInfo<MeshData>>();
+
+    public bool useFalloff; // ep.11
+    float[,] falloffMap;
+
+    void Awake(){
+        falloffMap = FalloffGenerator.GenarateFallOffMap(mapTileSize);
+    }
 
     /*                 Draw Map                 */
     /*------------------------------------------*/
     public void DrawMap(){
-        MapData mapData = GenarateMapData();
+        MapData mapData = GenarateMapData(Vector2.zero);
         MapDisplay display = FindObjectOfType<MapDisplay>();
         if(mode == MapMode.NoiseMap){
             display.DrawTexture(Utils.textureFromValueMap(mapData.heightMap));
@@ -39,7 +50,9 @@ public class MapGenerator : MonoBehaviour {
             display.DrawTexture(Utils.textureFromColorMap(mapData.colorMap,mapTileSize,mapTileSize));
         }else if (mode==MapMode.Mesh){
             display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap,heightGain, gainCurve,editorLOD),
-                                Utils.textureFromColorMap(mapData.colorMap, mapTileSize, mapTileSize));
+                            Utils.textureFromColorMap(mapData.colorMap, mapTileSize, mapTileSize));
+        }else if(mode==MapMode.FalloffMap){
+            display.DrawTexture(Utils.textureFromValueMap(FalloffGenerator.GenarateFallOffMap(mapTileSize)));
         }
     }
 
@@ -48,15 +61,15 @@ public class MapGenerator : MonoBehaviour {
     /*_______________________________________*/
 
     // request Map
-    public void RequestMapData(Action<MapData> callback) {
+    public void RequestMapData(Vector2 center, Action<MapData> callback) {
         ThreadStart my_thread = delegate {
-            MapDataThread (callback);
+            MapDataThread (center, callback);
         };
         new Thread(my_thread).Start();
     }
     // Map thread
-    void MapDataThread(Action<MapData> callback){
-        MapData mapData = GenarateMapData();
+    void MapDataThread(Vector2 center, Action<MapData> callback){
+        MapData mapData = GenarateMapData(center);
         lock (mapDtThreadInfoQ){
             mapDtThreadInfoQ.Enqueue(new mapThreadInfo<MapData>(callback, mapData));
         }
@@ -94,17 +107,20 @@ void Update(){
     }
     /*                 Generate                 */
     /*------------------------------------------*/
-    MapData GenarateMapData()
-    {
-        float[,] noiseMap = Noise.GenarateNoiseMap(mapTileSize, mapTileSize, seed, noiseScale, levels, persistance, lacunarity, offset);
+    MapData GenarateMapData(Vector2 center) {
+        float[,] noiseMap = Noise.GenarateNoiseMap(mapTileSize + 2, mapTileSize + 2, seed, noiseScale, levels, persistance, lacunarity, center + offset, normalizeMode);
         Color[] colorMap = new Color[mapTileSize * mapTileSize];
         float current;
         for (int y = 0; y < mapTileSize; y++){
             for (int x = 0; x < mapTileSize; x++){
+                if (useFalloff){
+                    noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - falloffMap[x, y]);
+                }
                 current = noiseMap[x, y];
                 for (int i = 0; i < regions.Length; i++){
-                    if (current <= regions[i].height){
+                    if (current >= regions[i].height){
                         colorMap[y * mapTileSize + x] = regions[i].colour;
+                    }else{
                         break;
                     }
                 }
@@ -122,6 +138,8 @@ void Update(){
     if(levels<0){
         levels=0;
     }
+    falloffMap = FalloffGenerator.GenarateFallOffMap(mapTileSize);
+
 }
 
     struct mapThreadInfo<T> {
