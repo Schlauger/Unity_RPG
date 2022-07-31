@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+    using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
@@ -77,7 +77,8 @@ public class EndlessTerrain : MonoBehaviour
         }
     }
 
-
+/*                    Terrain Tile                    */
+/*----------------------------------------------------*/
     public class TerrainTile
     {
         GameObject obj;
@@ -86,6 +87,7 @@ public class EndlessTerrain : MonoBehaviour
 
         MeshFilter meshFilter;
         MeshRenderer meshRenderer;
+        MeshCollider meshCollider; // ep.13
         LODInfo[] lods; // ep 9
         LODMesh[] lodMeshes;
         MapData mapData;
@@ -102,8 +104,8 @@ public class EndlessTerrain : MonoBehaviour
             obj = new GameObject("Terrain Tile [" + position.x + ", " + position.y + "]");
             meshRenderer = obj.AddComponent<MeshRenderer>();
             meshFilter = obj.AddComponent<MeshFilter>();
+            meshCollider = obj.AddComponent<MeshCollider>();
             meshRenderer.material = material;
-
             obj.transform.position = position3D * scale; // ep.10
             obj.transform.parent = parent;
             obj.transform.localScale = Vector3.one * scale;
@@ -150,6 +152,7 @@ public class EndlessTerrain : MonoBehaviour
                         if(lodMesh.hasMesh){
                             preLODidx = lodIdx;
                             meshFilter.mesh = lodMesh.mesh;
+                            meshCollider.sharedMesh = lodMesh.mesh; 
                         }else if (true) {
                             lodMesh.RequestMesh(mapData);
                         }
