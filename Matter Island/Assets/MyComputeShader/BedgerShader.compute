@@ -3,15 +3,92 @@
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
+struct SrcMeshVertex{
+    float3 position;
+    float2 uv;
+    float4 color;
+};
+
+RWStructuredBuffer<SrcMeshVertex> _srcVertices;
+RWStructuredBuffer<int> _srcIndices;
+
+struct GenMeshVertex{
+    float3 position;
+    float3 normal;
+    float2 uv;
+    float4 color;
+};
+
+RWStructuredBuffer<GenMeshVertex> _genVertices;
+RWStructuredBuffer<int> _genIndices;
+
+int numSrcTriangle;
+float height;
+float4x4 transform;
+
 RWTexture2D<float4> Result;
 
 float resolution;    // added
 
-[numthreads(8,8,1)]
+
+float3 CalculateTriangleNormal(float3 a, float3 b, float3 c){
+    return normalize(cross(b - a, c - a));
+}
+
+SrcMeshVertex Transform(SrcMeshVertex v){
+    SrcMeshVertex o;
+    o.position = mul(transform,float4(v.position,1)).xyz;
+    o.uv = v.uv;
+    return o;
+}
+
+GenMeshVertex CreateGeneratedVertex(SrcMeshVertex src, float3 normal){
+    GenMeshVertex o;
+    o.position = src.position;
+    o.normal = normal;
+    o.uv = src.uv;
+    return o;
+}
+
+void AddTrianlge(int startIdx, SrcMeshVertex a, SrcMeshVertex b, SrcMeshVertex c){
+    float triangleNormal = CalculateTriangleNormal(a.position, b.position, c.position);
+    _genIndices[startIdx] = CreateGeneratedVertex(a,triangleNormal);
+    _genVertices[startIdx + 1] = CreateGeneratedVertex(b, triangleNormal);
+    _genVertices[startIdx + 2] = CreateGeneratedVertex(c, triangleNormal);
+    _genIndices[startIdx] = startIdx;
+    _genIndices[startIdx] = startIdx + 1;
+    _genIndices[startIdx] = startIdx + 2;
+}
+
+// float rand(float2 co){
+//     return(frac(sin(dot(co.xy,float2(12.9898, 78.233))) * 43758.5453)) * 1;
+// }
+
+[numthreads(10,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    // TODO: insert actual code here!
-    float x=id.x/resolution;
-    float y=id.y/resolution;
-    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    //cube c = cubes[id.x];
+    if((int)id.x>=numSrcTriangle){
+        return;
+    }
+    
+    int triStart=id.x * 3;
+    SrcMeshVertex a = Transform(_srcVertices[_srcIndices[triStart]]);
+    SrcMeshVertex b = Transform(_srcVertices[_srcIndices[triStart + 1]]);
+    SrcMeshVertex c = Transform(_srcVertices[_srcIndices[triStart + 2]]);
+
+    float3 triNormal = CalculateTriangleNormal(a.position, b.position, c.position);
+    SrcMeshVertex center;
+    center.position = (a.position + b.position + c.position)/3 + triNormal * height;
+    center.uv = (a.uv + b.uv + c.uv);
+
+    //float x=id.x/resolution;
+    int generatedStart = id.x * 3 * 3;
+    
+    AddTrianlge(generatedStart, a, b, center);
+    AddTrianlge(generatedStart + 3, b, c, center);
+    AddTrianlge(generatedStart + 6, c, a, center);
+    //float y=id.y/resolution;
+    //float zpos = rand(float2(x,cube.position.z));
+    //Result[id.xy] = float4(x, 0.0, 0.0, 0.0);// Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
 }
