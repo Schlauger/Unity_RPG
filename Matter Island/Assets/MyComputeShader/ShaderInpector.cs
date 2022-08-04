@@ -9,7 +9,7 @@ public class ShaderInpector : Editor{
         base.OnInspectorGUI();
 
         if(GUILayout.Button("Create")){
-            Debug.Log("Button pressed");
+            //Debug.Log("Button pressed"); 
         }
     }
 

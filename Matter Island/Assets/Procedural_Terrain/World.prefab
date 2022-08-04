@@ -178,7 +178,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 72e948f4e7c39034d8671e3c2c0b2357, type: 2}
+  - {fileID: 2100000, guid: 16232d387a154c543904ccd86823dad0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -364,7 +364,7 @@ MonoBehaviour:
   - lod: 3
     visibleDstThreshold: 600
   viewer: {fileID: 0}
-  mapMaterial: {fileID: 2100000, guid: 72e948f4e7c39034d8671e3c2c0b2357, type: 2}
+  mapMaterial: {fileID: 2100000, guid: 16232d387a154c543904ccd86823dad0, type: 2}
 --- !u!114 &5291299579996321935
 MonoBehaviour:
   m_ObjectHideFlags: 0
