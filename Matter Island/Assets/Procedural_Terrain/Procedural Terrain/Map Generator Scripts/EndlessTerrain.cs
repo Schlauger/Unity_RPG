@@ -20,7 +20,7 @@ public class EndlessTerrain : MonoBehaviour
     Dictionary<Vector2, TerrainTile> terrainTilesDict = new Dictionary<Vector2, TerrainTile>();
     static List<TerrainTile> existedTiles = new List<TerrainTile>(); // ep.10 
     void Start()
-    {
+    { 
         mapGenerator = FindObjectOfType<MapGenerator>();
         maxViewDst = detailLevels[detailLevels.Length - 1].visibleDstThreshold;
         tileSize = MapGenerator.mapTileSize - 1;
